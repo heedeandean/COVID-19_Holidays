@@ -1,3 +1,6 @@
+## 테스트 용입니당 ... 아직 정상 실행 안됐어요 ..ㅜㅜ
+
+
 from bs4 import BeautifulSoup
 import requests
 import numpy as np
@@ -14,42 +17,74 @@ soup = BeautifulSoup(html, "html.parser")
 
 list = soup.find("div", {'class' : "list_body"})
 
-n = 2
+a = []
 
-list2 = soup.select('#contents > div > div.corona_list > div.list_body > ul:nth-child(1)')
+list2 = soup.select('#contents > div > div.corona_list > div.list_body > ul:nth-child(48)')
 
-# 230
 
-print(list2)
 
+
+
+
+
+########################### test zone #################################################
+
+# test = list2[0].find("table", {'class' : "tableCol __se_tbl"}).tbody.tr.find_all('td')
+
+# for i in range(len(test)):
+#    a.append(test[i].text)
+#
+# print(a)
+#
+# list3 = soup.select('#contents > div > div.corona_list > div.list_body')
+#
+# print(list3[0].select('ul:nth-child(2)'))
+# for i in list3[0].ul:
+#     print(i)
+#
+
+############################################################################
+
+arr = np.empty((0,12) , dtype=str)
+print(arr)
 list_res = []
 
-print(len(list2))
+list_res_table = []
 
-
-
-for i in range(1,231) :
+# 230
+for i in range(21,25) :
     for j in range(1,7) :
+
         list2 = soup.select(
             '#contents > div > div.corona_list > div.list_body > ul:nth-child({}) > li:nth-child({})'.format(i,j))
 
-        print('count :: {} ,, {} \n'.format(i,j))
-        print(list2[0].text)
+        print('tagname :: {}  count :: {} ,, {} '.format(list2[0].name,i,j))
 
+        print(list2[0].text)
         list_res.append(list2[0].text)
 
-np_busan = np.array(list_res).reshape(-1,6)
+        if j == 6:
+            for tag in list2[0].children :
+                print("eee!!",tag.p)
+                if tag.name == 'table':
+                    print('!!!')
+                    #list_res_table.append()
+                    for tag_tag in tag.tbody.tr.children:
+                        if tag_tag.name == 'td':
+                            list_res_table.append(tag_tag.text)
+
+            continue
+
+
+
+
+print(list_res)
+np_busan = np.array(list_res).reshape(-1,5)
 
 print('------------')
 print(np_busan)
 
-np.savetxt('save.csv', np_busan, fmt='%s', delimiter=",", encoding='UTF-8')
-
-
-
-
-
-
+# np.savetxt('save.csv', np_busan, fmt='%s', delimiter=",", encoding='UTF-8')
 
 
 
@@ -65,6 +100,12 @@ np.savetxt('save.csv', np_busan, fmt='%s', delimiter=",", encoding='UTF-8')
 
 
 '''
+
+
+
+
+
+
 
 
 for t in table.children:

@@ -1,6 +1,7 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import ssl
+import numpy as np
 
 context = ssl._create_unverified_context()
 
@@ -22,7 +23,7 @@ list_ph = []
 def fill_list(empty_list):
     
     if not empty_list:
-        result = ''
+        result = '-'
     else:
         result = empty_list[0].text 
 
@@ -61,3 +62,12 @@ for div in divs_ph:
 
 print("<<<<<<<<<<<<<<<<<<<<< 전남 >>>>>>>>>>>>>>>>>>>>\n", list_jn, "\n")
 print("<<<<<<<<<<<<<<<<<<<<< 경북(포항) >>>>>>>>>>>>>>>>>>>>\n", list_ph, "\n")
+
+
+# 매트릭스 변환 - 수정 :: 우현 20200819
+arr_jn = np.array(list_jn).reshape(-1,6)
+arr_ph = np.array(list_ph).reshape(-1,5)
+
+# Save csv - 수정 :: 우현 20200819
+np.savetxt('jn_20200819.csv', arr_jn, fmt='%s', delimiter=",", encoding='UTF-8')
+np.savetxt('ph_20200819.csv', arr_ph, fmt='%s', delimiter=",", encoding='UTF-8')
