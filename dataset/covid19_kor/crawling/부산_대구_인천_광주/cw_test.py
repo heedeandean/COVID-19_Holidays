@@ -23,7 +23,6 @@ soup_ic = BeautifulSoup(html_ic,"html.parser")
 
 # 속성 설정
 ul_bs = soup_bs.select('#contents > div > div.corona_list > div.list_body > ul:nth-child(n)')
-#a_ic = soup_ic.select('#content > div.content-body > div > div > div > section > div.section4-body ')
 a_find_ic = soup_ic.find_all('a', class_ ='patinet-profile')
 
 
@@ -34,7 +33,7 @@ list_data_bs = []
 list_data_ic = []
 
 
-## 부산시
+## 부산시 parser
 
 print('부산시 데이터 down_loading.... :: ')
 
@@ -57,91 +56,52 @@ for ul in ul_bs :
     if count_load == 100.0 :
         print(' 진행카운트 :: {} || 전체카운트 :: {} || 진행률 :: {} %'.format(len(list_data_bs), len(ul_bs), count_load))
 
-## 인천시
+## 인천시 parser
+
+print('인천시 데이터 down_loading.... :: ')
 
 for a in a_find_ic:
     for strong in a :
         if strong.name == 'strong':
-            #print(strong.text)
-            #print('=========')
             list_data_ic.append(strong.text)
 
         else :
-            #print(strong)
             list_data_ic.append(strong)
 
 
 
+## 정규표현식 변환
+def re_inchon(list_data):
+    arr_data = np.array(list_data).reshape(-1, 7)
+    arr_data = np.delete(arr_data, (0, 2, 5, 6), axis=1)
 
+    pre_arr_data = arr_data[:, 2]
 
+    str_x = re.sub(r'[\r\n\t]', '', '+'.join(pre_arr_data))
+    str_x = re.sub(r"\s+", '', str_x)
+    str_x = re.sub(r"[(]\d\d[.]", '(2020.', str_x)
 
-print(len(list_data_ic))
-# list -> matrix 형변환
+    str_x = re.sub('[(,)]', '', str_x)
+    str_x = re.sub('[/]1인가구', '', str_x)
+    str_x = re.sub('[/]재확진일', '', str_x)
+
+    pre_list_data = re.split('[+]|[/]', str_x)
+
+    pre_arr_data = np.array(pre_list_data).reshape(-1, 2)
+
+    join_arr_data = np.hstack((arr_data[:, :-1], pre_arr_data))
+    return join_arr_data
+
+## list -> matrix 형변환
 arr_data_bs = np.array(list_data_bs).reshape(-1,5)
-arr_data_ic = np.array(list_data_ic).reshape(-1,7)
+arr_data_ic = re_inchon(list_data_ic)
 
 
 
-# 불필요 열 삭제
-del_arr_data_ic = np.delete(arr_data_ic,(0,2,5,6),axis=1)
-arr_data_ic = np.delete(arr_data_ic,(0,2,5,6),axis=1)
-
-
-print(arr_data_ic)
-str_x = re.sub(r'[\r\n\t]','','+'.join(arr_data_ic[:,2]))
-print(str_x)
-str_x = re.sub(r"\s+",'',str_x)
-print(str_x)
-
-# print(re.findall('\d{2,}.\d\d.\d\d',str_x))
-
-
-print(list_data_ic)
-
-
-
-#####test
-print(del_arr_data_ic[:,2])
-pre_del_arr_data_ic = del_arr_data_ic[:,2]
-str_x = re.sub(r'[\r\n\t]','','+'.join(pre_del_arr_data_ic))
-str_x = re.sub(r"\s+",'',str_x)
-str_x = re.sub(r"[(]\d\d[.]",'(2020.',str_x)
-print(str_x)
-
-
-
-## 확진 / 재확진 전처리
-pre_del_arr_data_ic = str_x.split(sep='+')
-
-str_x = '+'.join(pre_del_arr_data_ic)
-str_x = re.sub('[(,)]','',str_x)
-str_x = re.sub('[/]1인가구','',str_x)
-str_x = re.sub('[/]재확진일','',str_x)
-
-
-pre_del_arr_data_ic = re.split('[+]|[/]',str_x)
-
-print(str_x)
-
-
-print(pre_del_arr_data_ic)
-
-
-
-arr_pre_del_arr_data_ic = np.array(pre_del_arr_data_ic).reshape(-1,2)
-
-
-test = np.hstack((arr_data_ic,arr_pre_del_arr_data_ic))
 
 # Save as csv
-#np.savetxt('bs_20200819.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8')
-np.savetxt('ic_20200819.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8')
-np.savetxt('ic_20200819_test.csv', test, fmt='%s', delimiter=",", encoding='UTF-8')
-
-
-
-
-
+np.savetxt('bs_data.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8')
+np.savetxt('ic_data.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8')
 
 
 
@@ -208,26 +168,3 @@ print(len(arr_move_bs))
 
 #np.savetxt('bs_20200819_move.csv', arr_move_bs, fmt='%s', delimiter=",", encoding='UTF-8')
 '''
-
-#############################    문자열 처리 (인천)    #############################
-# print(list_data_ic)
-
-# print(str_x)
-# str_x = re.sub(r"\s+",'',str_x)
-# print(str_x)
-# str_x = re.sub(r'펼치기','',str_x)
-# print(str_x)
-#
-# print(re.findall('\d{2,}.\d\d.\d\d',str_x))
-#
-#
-# print(list_data_ic)
-##########
-
-# str_x = re.sub(r'[\r\n\t]','','+'.join(list_data_ic))
-# print(str_x)
-# str_x = re.sub(r"\s+",'',str_x)
-# print(str_x)
-# str_x = re.sub(r'펼치기','',str_x)
-# print(str_x)
-# list_data_ic = str_x.split(sep='+')
