@@ -32,6 +32,7 @@ def fill_list(empty_list):
 
 
 for tr in trs_jn:
+    print(type(tr))
 
     for td in tr.select('tr:nth-of-type(odd)'):
 
@@ -68,6 +69,9 @@ print("<<<<<<<<<<<<<<<<<<<<< 경북(포항) >>>>>>>>>>>>>>>>>>>>\n", list_ph, "\
 arr_jn = np.array(list_jn).reshape(-1,6)
 arr_ph = np.array(list_ph).reshape(-1,5)
 
+
+'''
 # Save csv - 수정 :: 우현 20200819
 np.savetxt('jn_20200819.csv', arr_jn, fmt='%s', delimiter=",", encoding='UTF-8')
 np.savetxt('ph_20200819.csv', arr_ph, fmt='%s', delimiter=",", encoding='UTF-8')
+'''
