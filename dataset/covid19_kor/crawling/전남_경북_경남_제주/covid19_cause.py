@@ -155,27 +155,6 @@ print("<<<<<<<<<<<<<<<<<<<<< 제      주 >>>>>>>>>>>>>>>>>>>>\n", list_jj, "\n"
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # csv
 # arr_jn = np.array(list_jn).reshape(-1,6)
 # arr_ph = np.array(list_ph).reshape(-1,5)
