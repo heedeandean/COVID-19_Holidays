@@ -72,36 +72,49 @@ for a in a_find_ic:
 
 ## 정규표현식 변환
 def re_inchon(list_data):
+
+    # 리스트 형 -> 배열 형 변환 및 불필요 열 제거
     arr_data = np.array(list_data).reshape(-1, 7)
     arr_data = np.delete(arr_data, (0, 2, 5, 6), axis=1)
 
+    # 전처리에 필요한 열 지정
     pre_arr_data = arr_data[:, 2]
 
+    # 배열형 -> 문자열 형으로 변환 (re 패키지 적용)
     str_x = re.sub(r'[\r\n\t]', '', '+'.join(pre_arr_data))
+
+
+    # (2020.xx.xx / 내용명 ) 형식으로 맞추기 위한 전처리 과정
     str_x = re.sub(r"\s+", '', str_x)
     str_x = re.sub(r"[(]\d\d[.]", '(2020.', str_x)
-
     str_x = re.sub('[(,)]', '', str_x)
     str_x = re.sub('[/]1인가구', '', str_x)
     str_x = re.sub('[/]재확진일', '', str_x)
 
+    # 문자열 -> 리스트 형으로 변환
     pre_list_data = re.split('[+]|[/]', str_x)
 
+    # 리스트 형 -> 배열형으로 변환
     pre_arr_data = np.array(pre_list_data).reshape(-1, 2)
 
+    # 기본 배열 데이터 + 전처리 배열 데이터 조인
     join_arr_data = np.hstack((arr_data[:, :-1], pre_arr_data))
+
     return join_arr_data
+
+
+
 
 ## list -> matrix 형변환
 arr_data_bs = np.array(list_data_bs).reshape(-1,5)
-arr_data_ic = re_inchon(list_data_ic)
+arr_data_ic = re_inchon(list_data_ic) # 전처리함수 내 배열형 자동 변환
 
 
 
 
 # Save as csv
-np.savetxt('bs_data.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8')
-np.savetxt('ic_data.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8')
+np.savetxt('bs_data.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8') # 부산시 데이터
+np.savetxt('ic_data.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8') # 인천시 데이터
 
 
 
