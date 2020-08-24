@@ -8,14 +8,14 @@ import json
 
 context = ssl._create_unverified_context()
 
-html_jn = urlopen("https://www.jeonnam.go.kr/coronaMainPage.do", context=context) # 전남
-html_ph = urlopen("http://www.pohang.go.kr/COVID-19.html") # 경북(포항)
-html_gj = urlopen("http://www.gyeongju.go.kr/area/page.do?mnu_uid=2860&") # 경북(경주)
-html_gs = urlopen("http://gbgs.go.kr/programs/coronaMove/coronaMove.do") # 경북(경산)
-html_uj = urlopen("http://www.uljin.go.kr/index.uljin?menuCd=DOM_000000110006003000") # 경북(울진)
-html_gn = urlopen("http://xn--19-q81ii1knc140d892b.kr/main/main.do#close") # 경남
+html_jn = urlopen("https://www.jeonnam.go.kr/coronaMainPage.do", context=context)       # 전남
+html_ph = urlopen("http://www.pohang.go.kr/COVID-19.html")                              # 경북(포항)
+html_gj = urlopen("http://www.gyeongju.go.kr/area/page.do?mnu_uid=2860&")               # 경북(경주)
+html_gs = urlopen("http://gbgs.go.kr/programs/coronaMove/coronaMove.do")                # 경북(경산)
+html_uj = urlopen("http://www.uljin.go.kr/index.uljin?menuCd=DOM_000000110006003000")   # 경북(울진)
+html_gn = urlopen("http://xn--19-q81ii1knc140d892b.kr/main/main.do#close")              # 경남
 
-url_jj = "https://www.jeju.go.kr/api/article.jsp?board=corona_copper&pageSize=50" # 제주 (출처 : https://www.jeju.go.kr/corona19.jsp)
+url_jj = "https://www.jeju.go.kr/api/article.jsp?board=corona_copper&pageSize=50"       # 제주 (출처 : https://www.jeju.go.kr/corona19.jsp)
 
 
 soup_jn = BeautifulSoup(html_jn.read(), "html.parser")
