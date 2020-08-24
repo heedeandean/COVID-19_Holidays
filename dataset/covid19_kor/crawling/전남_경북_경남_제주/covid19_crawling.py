@@ -1,10 +1,11 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import ssl
-import numpy as np
 import re
 import requests
 import json
+from datetime import datetime
+import csv   
 
 context = ssl._create_unverified_context()
 
@@ -32,7 +33,7 @@ data_jj = json.loads(req_jj.text)
 tag_jn = soup_jn.select('body > div > div.covid-19-wrap > div.patients-way.patients-wayA > div.tbl-box.table_wrap_mobile.tblWrap > table > tbody')
 tag_ph = soup_ph.find_all("div", {'class' : "item"})
 tag_gj = soup_gj.find_all("ul", {'class' : "on"})
-tag_gs = soup_gs.find_all("tbody")
+tag_gs = soup_gs.find_all("table", {'class' : "table01"})
 tag_uj = soup_uj.find_all("tbody")
 tag_gn = soup_gn.find_all("tr", {'id' : "patient4"})
 
@@ -46,13 +47,45 @@ list_gn = []
 list_jj = []
 
 
+def format_date(cfmDate):
+
+    if (cfmDate != '-'):
+        cfmDate = re.findall("\d+", cfmDate)
+
+        if (len(cfmDate) == 2):
+            cfmDate.insert(0, "2020")
+        
+        cfmDate = "-".join(cfmDate)
+        cfmDate = datetime.strptime(cfmDate, "%Y-%m-%d").strftime("%Y-%m-%d")
+
+    return cfmDate
+
+
+def format_contactCnt(contactCnt):
+
+    if (contactCnt == '-' or contactCnt == "조사중"):
+        contactCnt = '-'
+
+    elif (contactCnt == "없음" or contactCnt == None):
+        contactCnt = 0
+
+    else: 
+        contactCnt = re.findall("\d+", contactCnt)[0]    
+
+    return contactCnt
+
+
 def fill_list(empty_list):
-    
+
     if not empty_list:
         result = '-'
-    else:
-        result = empty_list[0].text 
 
+    else:
+        if (empty_list[0].text == ''):
+            result = '-'
+        else:
+            result = empty_list[0].text 
+    
     return result
 
 
@@ -61,104 +94,122 @@ for tr in tag_jn:
 
     for td in tr.select('tr:nth-of-type(odd)'):
 
-        num = td.select('td:nth-of-type(1)')[0].text        # 확진자번호
-        info = td.select('td:nth-of-type(2)')[0].text       # 인적사항
-        route = td.select('td:nth-of-type(3)')[0].text      # 감염경로
-        cfmDate = td.select('td:nth-of-type(4)')[0].text    # 확진일
-        contact = td.select('td:nth-of-type(5)')[0].text    # 접촉
-        isolation = td.select('td:nth-of-type(6)')[0].text  # 격리
+        area = "전남"                                                    # 지역
+        cfmDate = format_date(td.select('td:nth-of-type(4)')[0].text)    # 확진일
+        route = td.select('td:nth-of-type(3)')[0].text                   # 감염경로
+        contactCnt = format_contactCnt(td.select('td:nth-of-type(5)')[0].text)              # 접촉자수
 
-        data = (num, info, route, cfmDate, contact, isolation)
+        data = (area, cfmDate, route, contactCnt)
         list_jn.append(data)
+
 
 
 for div in tag_ph:
 
-    num = div.select('p:nth-child(1) > span:nth-child(2)')[0].text       
-    info = fill_list(div.select('p:nth-child(2) > span:nth-child(2)'))   
+    area = "경북(포항)"
+    cfmDate = format_date(div.select('p:nth-child(4) > span:nth-child(2)')[0].text)
     route = fill_list(div.select('p:nth-child(6) > span:nth-child(2)'))  
-    cfmDate = div.select('p:nth-child(4) > span:nth-child(2)')[0].text   
-    isolation = div.select('p:nth-child(5) > span:nth-child(2)')[0].text 
+    contactCnt = '-'
 
-    data = (num, info, route, cfmDate, isolation)
+    data = (area, cfmDate, route, contactCnt)
     list_ph.append(data)
 
+    
 
 for li in tag_gj:
 
-    num = li.select('li:nth-of-type(1)')[0].text         
-    route = li.select('li:nth-of-type(3)')[0].text      
-    cfmDate = li.select('li:nth-of-type(4)')[0].text    
-    isolation = li.select('li:nth-of-type(5)')[0].text  
+    area = "경북(경주)"
+    cfmDate = format_date(li.select('li:nth-of-type(4)')[0].text)    
+    route = re.sub(r"\W", "-", li.select('li:nth-of-type(3)')[0].text)      
+    contactCnt = '-'
 
-    data = (num, route, cfmDate, isolation)
+    data = (area, cfmDate, route, contactCnt)
     list_gj.append(data)
+
 
 
 for td in tag_gs:
 
-    num = td.select('tr:nth-child(1) > td:nth-child(1)')[0].text            
-    info = td.select('tr:nth-child(1) > td:nth-child(3)')[0].text           
-    route = fill_list(td.select('tr:nth-child(1) > td:nth-child(6)'))       
-    cfmDate = td.select('tr:nth-child(1) > td:nth-child(4)')[0].text        
-    isolation = td.select('tr:nth-child(1) > td:nth-child(5)')[0].text      
+    area = "경북(경산)"
+    cfmDate = format_date(td.select('tbody > tr:nth-child(1) > td:nth-child(4)')[0].text)        
+    obj = fill_list(td.select('tbody > tr:nth-child(1) > td:nth-child(6)')).split('(')[0].strip()       
 
-    data = (num, info, route, cfmDate, isolation)
+    if (obj.isdigit()):
+        route = '-'
+        contactCnt = obj
+    else:
+        route = obj
+        contactCnt = '-'
+
+    data = (area, cfmDate, route, contactCnt)
     list_gs.append(data)
 
-del list_gs[0]
 
 
 for td in tag_uj:
-    num = td.select('tr:nth-child(1) > th')[0].text                    
-    info = td.select('tr:nth-child(1) > td.point_bg')[0].text           
-    route = td.select('tr:nth-child(1) > td:nth-child(3)')[0].text      
-    cfmDate = td.select('tr:nth-child(1) > td:nth-child(4)')[0].text  
-    isolation = td.select('tr:nth-child(1) > td:nth-child(6)')[0].text 
 
-    data = (num, info, route, cfmDate, isolation)
+    area = "경북(울진)"
+    cfmDate = format_date(td.select('tr:nth-child(1) > td:nth-child(4)')[0].text)  
+    route = td.select('tr:nth-child(1) > td:nth-child(3)')[0].text  
+    contactCnt = '-'    
+
+    data = (area, cfmDate, route, contactCnt)
     list_uj.append(data)
+
 
 
 for td in tag_gn:
 
-    num = td.select('td:nth-of-type(1)')[0].text.strip()
-    info = td.select('td:nth-of-type(2)')[0].text.strip()
+    area = "경남"
+    cfmDate = format_date(td.select('td:nth-of-type(4)')[0].text.split(',')[0])
     route = td.select('td:nth-of-type(3)')[0].text.strip()
-    cfmDate = td.select('td:nth-of-type(4)')[0].text.strip()
-    isolation = re.sub(r"\W", "",  td.select('td:nth-of-type(5)')[0].text.strip())
+    contactCnt = '-' 
 
-    data = (num, info, route, cfmDate, isolation)
+    data = (area, cfmDate, route, contactCnt)
     list_gn.append(data)
+
 
 
 for line in data_jj["articles"]:
 
-    num = line["title"]
-    info = line["add1"]
-    route = line["add2"]
-    cfmDate = line["add3"]
-    contact = line["add4"]
-    isolation = line["add5"]
+    area = "제주"
+    cfmDate = format_date(line["add3"])
 
-    data = (num, info, route, cfmDate, contact, isolation)
+    route = line["add2"]
+    if(route == None): route = '-'
+        
+    contactCnt = format_contactCnt(line["add4"])
+
+    data = (area, cfmDate, route, contactCnt)
     list_jj.append(data)
 
-print("<<<<<<<<<<<<<<<<<<<<< 전      남 >>>>>>>>>>>>>>>>>>>>\n", list_jn, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 경북(포항) >>>>>>>>>>>>>>>>>>>>\n", list_ph, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 경북(경주) >>>>>>>>>>>>>>>>>>>>\n", list_gj, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 경북(경산) >>>>>>>>>>>>>>>>>>>>\n", list_gs, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 경북(울진) >>>>>>>>>>>>>>>>>>>>\n", list_uj, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 경      남 >>>>>>>>>>>>>>>>>>>>\n", list_gn, "\n")
-print("<<<<<<<<<<<<<<<<<<<<< 제      주 >>>>>>>>>>>>>>>>>>>>\n", list_jj, "\n")
 
 
+# print("<<<<<<<<<<<<<<<<<<<<< 전      남 >>>>>>>>>>>>>>>>>>>>\n", list_jn, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 경북(포항) >>>>>>>>>>>>>>>>>>>>\n", list_ph, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 경북(경주) >>>>>>>>>>>>>>>>>>>>\n", list_gj, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 경북(경산) >>>>>>>>>>>>>>>>>>>>\n", list_gs, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 경북(울진) >>>>>>>>>>>>>>>>>>>>\n", list_uj, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 경      남 >>>>>>>>>>>>>>>>>>>>\n", list_gn, "\n")
+# print("<<<<<<<<<<<<<<<<<<<<< 제      주 >>>>>>>>>>>>>>>>>>>>\n", list_jj, "\n")
 
 
-# csv
-# arr_jn = np.array(list_jn).reshape(-1,6)
-# arr_ph = np.array(list_ph).reshape(-1,5)
+def create_csv(list_area, area):
+    
+    today = datetime.now().strftime('%Y%m%d')
+    file_name = area + '_' + today + '.csv'
 
+    with open(file_name, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(list_area)
 
-# np.savetxt('jn_20200819.csv', arr_jn, fmt='%s', delimiter=",", encoding='UTF-8')
-# np.savetxt('ph_20200819.csv', arr_ph, fmt='%s', delimiter=",", encoding='UTF-8')
+        print(file_name, "OK")
+
+create_csv(list_jn, "jn")
+create_csv(list_ph, "ph")
+create_csv(list_gj, "gj")
+create_csv(list_gs, "gs")
+create_csv(list_uj, "uj")
+create_csv(list_gn, "gn")
+create_csv(list_jj, "jj")
+
