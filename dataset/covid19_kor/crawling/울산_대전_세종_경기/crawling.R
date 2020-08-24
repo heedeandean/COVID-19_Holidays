@@ -13,7 +13,7 @@ Sys.setlocale("LC_ALL","Korean")
 
 dj_table <- df %>% arrange(대전)
 View(dj_table)
-write.csv(dj_table, 'c:/workspaces/R/COVID_19/csv/dj_0821.csv',row.names = F)
+write.csv(dj_table, 'c:/workspaces/R/COVID_19/csv/dj_0824.csv',row.names = F)
 
 
 
@@ -57,7 +57,7 @@ contact_num <- sapply(sj_df, '[',6)
 sj_table <- data.frame(num,no,area,route,date,contact_num)
 sj_table <- sj_table %>% arrange(num)
 View(sj_table) # 확인
-write.csv(sj_table, 'c:/workspaces/R/COVID_19/csv/sj_0820.csv', row.names = F)
+write.csv(sj_table, 'c:/workspaces/R/COVID_19/csv/sj_0823.csv', row.names = F)
 
 
 
@@ -88,10 +88,10 @@ date <-  sapply(us_df, "[",4)
 us_table <- data.frame(num,no,area,route,date)
 us_table <- us_table %>% arrange(num)
 View(us_table) # 확인
-write.csv(us_table, 'c:/workspaces/R/COVID_19/csv/us_0821.csv',row.names = F)
+write.csv(us_table, 'c:/workspaces/R/COVID_19/csv/us_0823.csv',row.names = F)
 
 
-
+########################################################
 
 
 
