@@ -5,6 +5,8 @@ import numpy as np
 import re
 import sys
 import numpy
+
+# 콘솔 창에서 배열 다 확인 할 수 있도록 제공
 numpy.set_printoptions(threshold=sys.maxsize)
 
 
@@ -16,14 +18,18 @@ context = ssl._create_unverified_context()
 # URL -> html 생성
 html_bs = urlopen("http://www.busan.go.kr/covid19/Corona19/travelhist.do")
 html_ic = urlopen('https://www.incheon.go.kr/health/HE020409')
+# html_gj = urlopen('https://www.gwangju.go.kr/c19/c19/contentsView.do?pageId=coronagj2') <- 광주시 같은 경우 routeData 형식으로 되어있어 크롤링 불가
+# 대구의 경우 기본 확진자 기본 컬럼만 제공
 
 # parser 생성
 soup_bs = BeautifulSoup(html_bs, "html.parser")
 soup_ic = BeautifulSoup(html_ic,"html.parser")
+#soup_gj = BeautifulSoup(html_gj, "html.parser")
 
 # 속성 설정
 ul_bs = soup_bs.select('#contents > div > div.corona_list > div.list_body > ul:nth-child(n)')
 a_find_ic = soup_ic.find_all('a', class_ ='patinet-profile')
+# tr_find_gj = soup_gj.find_all('tr', attrs={'class': "line_bg routeData"})
 
 
 # 크롤링
@@ -31,6 +37,7 @@ a_find_ic = soup_ic.find_all('a', class_ ='patinet-profile')
 ## 리스트 초기화
 list_data_bs = []
 list_data_ic = []
+list_data_gj = []
 
 
 ## 부산시 parser
@@ -68,7 +75,10 @@ for a in a_find_ic:
         else :
             list_data_ic.append(strong)
 
+## 광주시 parser
 
+# for tr in tr_find_gj :
+#     print(tr)
 
 ## 정규표현식 변환
 def re_inchon(list_data):
@@ -112,9 +122,9 @@ arr_data_ic = re_inchon(list_data_ic) # 전처리함수 내 배열형 자동 변
 
 
 
-# Save as csv
-np.savetxt('bs_data.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8') # 부산시 데이터
-np.savetxt('ic_data.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8') # 인천시 데이터
+# Save as csv = 매번 날짜 변경 (덮어쓰기하면 예전꺼 날라가서 방법 몰라서 수작업으로 함 .. )
+np.savetxt('bs_data_20200824.csv', arr_data_bs, fmt='%s', delimiter=",", encoding='UTF-8') # 부산시 데이터
+np.savetxt('ic_data_20200824.csv', arr_data_ic, fmt='%s', delimiter=",", encoding='UTF-8') # 인천시 데이터
 
 
 
