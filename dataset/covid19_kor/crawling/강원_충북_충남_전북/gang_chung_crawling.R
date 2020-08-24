@@ -5,6 +5,8 @@ library(XML)
 library(stringr)
 library(httr)
 
+getwd()
+setwd('/Users/jungunbae/workspaces/project/dataset/강원_충북_충남_전북')
 
 #################################강원도#######################################
 #https://www.provin.gangwon.kr/covid-19.html
@@ -139,7 +141,8 @@ names(hoeng3) <- c('인적사항','추정감염경로','접촉자수', '격리�
 hoeng3[,"시도"] <- "강원도"
 hoeng3[,"지역"] <- "횡성군"
 hoengsung <- data.frame('시도'= hoeng3$'시도','지역'= hoeng3$'지역','확진일'= hoeng3$'확진일',
-                        '인적사항'= hoeng3$'인적사항','추정감염경로'= hoeng3$'추정감염경로', '접촉자수'= hoeng3$'접촉자수' )
+                        '인적사항'= hoeng3$'인적사항','추정감염경로'= hoeng3$'추정감염경로', '접촉자수'= hoeng3$'접촉자수')
+
 
 
 #영월군
@@ -184,14 +187,13 @@ inje3[,"추정감염경로"] <- "확인불가"
 inje3[,"접촉자수"] <- "확인불가"
 injegun <- data.frame('시도'= inje3$'시도','지역'= inje3$'지역','확진일'= inje3$'확진일',
                           '인적사항'= inje3$'인적사항','추정감염경로'= inje3$'추정감염경로', '접촉자수'= inje3$'접촉자수' )
-View(injegun)
 
 #양양군 -> 확진자 0명(8.19 기준)
 url13 <- "http://www.yangyang.go.kr/covid/corona-19.html"
 
 gangwon <- rbind(chuncheon, wonju, gangneung,teabaek, sokcho,hoengsung,pyeongchang,injegun)
 View(gangwon)
-write.csv(gangwon, 'gangwon_2020_08_21.csv', row.names = F)
+write.csv(gangwon, 'gangwon_2020_08_24.csv', row.names = F)
 
 
 #######################################충북#######################################
@@ -211,7 +213,7 @@ chungbuk3 <- as.data.frame(chungbuk3)
 chungbuk3<- chungbuk3[,c(6,5,4,3,2,1)]
 names(chungbuk3) <- c('확진자','확진일', '나이','거주지', '감염경로', '조치사항')
 
-write.csv(chungbuk3, 'chungbuk_2020_08_21.csv', fileEncoding = 'utf8')
+write.csv(chungbuk3, 'chungbuk_2020_08_24.csv', fileEncoding = 'utf8')
 
 #####################################충남#########################################
 url <- "http://www.chungnam.go.kr/coronaStatus.do?tab=2"
@@ -231,5 +233,4 @@ nam <- chung3[grep("관련", chungnam3$이동경로),]
 nam <- nam[,-c(2:5)]
 names(nam) <- c('환자','추정감염경로')
 chungnam <- merge(chung3,nam, by="환자", all = T)
-write.csv(chungnam3, 'chungnam_2020_08_21.csv', row.names = T, fileEncoding = "utf8")
-
+write.csv(chungnam3, 'chungnam_2020_08_24.csv', row.names = T, fileEncoding = "utf8")
