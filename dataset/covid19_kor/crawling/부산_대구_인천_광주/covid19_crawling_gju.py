@@ -61,7 +61,6 @@ for line in data_gju["list"]:
 
 for td in tag_gju:
 
-
     area = "광주"
     cfmDate = format_date(td.select('td:nth-child(5)')[0].text)
     route = fill_list(td.select('td:nth-child(4)'))
