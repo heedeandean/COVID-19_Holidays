@@ -25,14 +25,15 @@ chun3 <- matrix(chun2, ncol=7, byrow = T)
 chun3 <- as.data.frame(chun3) 
 names(chun3) <- c('환자번호', '인적사항','감염지역','확진일','치료병원', '퇴원', '추정감염경로')
 
+
 chun3[,"시도"] <- "강원도"
 chun3[,"지역"] <- "춘천시"
-chun3[,"접촉자수"] <- "확인불가"
+chun3[,"접촉자수"] <- "."
 
 chuncheon <- data.frame('시도'= chun3$'시도','지역'= chun3$'지역','확진일'= chun3$'확진일',
                         '인적사항'= chun3$'인적사항','추정감염경로'= chun3$'추정감염경로', '접촉자수'= chun3$'접촉자수' )
 
-
+View(chuncheon)
 
 #원주시 
 url2 <-  "https://www.wonju.go.kr/intro.jsp"
@@ -40,15 +41,18 @@ won <- url2 %>%
   read_html() %>%
   html_nodes('.titlebox>ul>li>p.text') %>%
   html_text() %>% data.frame()
-
+won
 won2 <- as.matrix(won)
-won3 <- matrix(won2, ncol=5, byrow = T)
+won3 <- matrix(won2, ncol=4, byrow = T)
 won3 <- as.data.frame(won3) 
-names(won3) <- c('인적사항','추정감염경로','접촉자수', '격리시설', '확진일')
+names(won3) <- c('인적사항','추정감염경로','확진일', '역학조사')
 won3[,"시도"] <- "강원도"
 won3[,"지역"] <- "원주시"
+won3[,"접촉자수"] <- "."
 wonju <- data.frame('시도'= won3$'시도','지역'= won3$'지역','확진일'= won3$'확진일',
-                    '인적사항'= won3$'인적사항','추정감염경로'= won3$'추정감염경로', '접촉자수'= won3$'접촉자수' )
+                    '인적사항'= won3$'인적사항','추정감염경로'= won3$'추정감염경로','접촉자수'= won3$'접촉자수' )
+
+View(wonju)
 
 #강릉시
 url3 <-  "https://www.gn.go.kr/"
@@ -63,16 +67,17 @@ gang3 <- as.data.frame(gang3)
 names(gang3) <- c('인적사항','이동경로','확진일', '격리시설', '퇴원')
 gang3[,"시도"] <- "강원도"
 gang3[,"지역"] <- "강릉시"
-gang3[,"추정감염경로"] <- "확인불가"
-gang3[,"접촉자수"] <- "확인불가"
+gang3[,"추정감염경로"] <- "."
+gang3[,"접촉자수"] <- "."
+
+gang3 <- gang3[grep("강릉", gang3$인적사항),]
 
 gangneung <- data.frame('시도'= gang3$'시도','지역'= gang3$'지역','확진일'= gang3$'확진일',
                         '인적사항'= gang3$'인적사항','추정감염경로'= gang3$'추정감염경로', '접촉자수'= gang3$'접촉자수' )
-
+View(gangneung)
 
 #동해시 -> 확진환자 0명(8.19 기준)
 url4 <- "https://www.dh.go.kr/corona19/01.htm"
-
 
 
 
@@ -102,6 +107,7 @@ names(baek3) <- c('순번','확진일','인적사항', '격리시설', '퇴원')
 
 teabaek <- data.frame('시도'= tae3$'시도','지역'= tae3$'지역','확진일'= baek3$'확진일',
                       '인적사항'= tae3$'인적사항','추정감염경로'= tae3$'추정감염경로', '접촉자수'= tae3$'접촉자수' )
+View(teabaek)
 
 #속초시
 #시도   지역   확진일   인적사항   추정감염경로   접촉자수
@@ -117,8 +123,8 @@ sok3 <- as.data.frame(sok3)
 names(sok3) <- c('인적사항','이동경로','확진일', '격리시설', '퇴원')
 sok3[,"시도"] <- "강원도"
 sok3[,"지역"] <- "속초시"
-sok3[,"추정감염경로"] <- "확인불가"
-sok3[,"접촉자수"] <- "확인불가"
+sok3[,"추정감염경로"] <- "."
+sok3[,"접촉자수"] <- "."
 sokcho <- data.frame('시도'= sok3$'시도','지역'= sok3$'지역','확진일'= sok3$'확진일',
                      '인적사항'= sok3$'인적사항','추정감염경로'= sok3$'추정감염경로', '접촉자수'= sok3$'접촉자수' )
 
@@ -161,8 +167,8 @@ pyeong3 <- as.data.frame(pyeong3)
 names(pyeong3) <- c('인적사항','증상발현','이동경로', '검사일자', '확진일')
 pyeong3[,"시도"] <- "강원도"
 pyeong3[,"지역"] <- "평창군"
-pyeong3[,"추정감염경로"] <- "확인불가"
-pyeong3[,"접촉자수"] <- "확인불가"
+pyeong3[,"추정감염경로"] <- "."
+pyeong3[,"접촉자수"] <- "."
 pyeongchang <- data.frame('시도'= pyeong3$'시도','지역'= pyeong3$'지역','확진일'= pyeong3$'확진일',
                           '인적사항'= pyeong3$'인적사항','추정감염경로'= pyeong3$'추정감염경로', '접촉자수'= pyeong3$'접촉자수' )
 
@@ -183,17 +189,22 @@ inje3 <- as.data.frame(inje3)
 names(inje3) <- c('인적사항','이동경로', '확진일', '입원기관','상태')
 inje3[,"시도"] <- "강원도"
 inje3[,"지역"] <- "인제군"
-inje3[,"추정감염경로"] <- "확인불가"
-inje3[,"접촉자수"] <- "확인불가"
+inje3[,"추정감염경로"] <- "."
+inje3[,"접촉자수"] <- "."
 injegun <- data.frame('시도'= inje3$'시도','지역'= inje3$'지역','확진일'= inje3$'확진일',
                           '인적사항'= inje3$'인적사항','추정감염경로'= inje3$'추정감염경로', '접촉자수'= inje3$'접촉자수' )
+
 
 #양양군 -> 확진자 0명(8.19 기준)
 url13 <- "http://www.yangyang.go.kr/covid/corona-19.html"
 
+
+
 gangwon <- rbind(chuncheon, wonju, gangneung,teabaek, sokcho,hoengsung,pyeongchang,injegun)
-View(gangwon)
-write.csv(gangwon, 'gangwon_2020_08_24.csv', row.names = F)
+
+
+
+write.csv(gangwon, 'gangwon_2020_08_25.csv', row.names = F)
 
 
 #######################################충북#######################################
@@ -213,7 +224,7 @@ chungbuk3 <- as.data.frame(chungbuk3)
 chungbuk3<- chungbuk3[,c(6,5,4,3,2,1)]
 names(chungbuk3) <- c('확진자','확진일', '나이','거주지', '감염경로', '조치사항')
 
-write.csv(chungbuk3, 'chungbuk_2020_08_24.csv', fileEncoding = 'utf8')
+write.csv(chungbuk3, 'chungbuk_2020_08_25.csv', fileEncoding = 'utf8')
 
 #####################################충남#########################################
 url <- "http://www.chungnam.go.kr/coronaStatus.do?tab=2"
@@ -228,9 +239,46 @@ names(chung3) <- c('환자','인적사항', '확진일','접촉자수', '격리�
 chung3$이동경로 <- gsub('\n','', chung3$이동경로)
 chung3$이동경로 <- gsub('\t','', chung3$이동경로)
 chung3$이동경로 <- gsub('-','', chung3$이동경로)
+View(chung3)
 
+
+"""
 nam <- chung3[grep("관련", chungnam3$이동경로),]
 nam <- nam[,-c(2:5)]
+View(nam)
 names(nam) <- c('환자','추정감염경로')
 chungnam <- merge(chung3,nam, by="환자", all = T)
-write.csv(chungnam3, 'chungnam_2020_08_24.csv', row.names = T, fileEncoding = "utf8")
+"""
+
+write.csv(chung3, 'chungnam_2020_08_25.csv', row.names = T, fileEncoding = "utf8")
+View(chungnam )
+
+################################통합####################
+#강원도
+gangwon2 <- gangwon[,-c(2,4)]
+names(gangwon2) <- c('area','cfmDate', 'route','contactCnt')
+
+#충북
+chungbuk4 <- chungbuk3[,-1]
+chungbuk4 <- chungbuk4[,-c(2,3)]
+chungbuk4 <- chungbuk4[,-3]
+chungbuk4[,"지역"] <- "충북"
+chungbuk4[,"접촉자"] <- "."
+chungbuk4 <- data.frame('area'= chungbuk4$'지역','cfmDate'= chungbuk4$'확진일',
+                      'route'= chungbuk4$'감염경로', 'contactCnt'= chungbuk4$'접촉자' )
+
+names(chungbuk4) <- c('확진자','확진일', '나이','거주지', '감염경로', '조치사항')
+
+
+#충남
+chungnam <- chung3[,-c(1,2)]
+chungnam <- chungnam[,-c(3,4)]
+chungnam[,"지역"] <- "충남"
+chungnam[,"감염경로"] <- "."
+chungnam <- data.frame('area'= chungnam$'지역','cfmDate'= chungnam$'확진일',
+                        'route'= chungnam$'감염경로', 'contactCnt'= chungnam$'접촉자수' )
+
+
+all <- rbind(gangwon2, chungbuk4, chungnam)
+write.csv(all, 'gangwon_chungbuk_chungnam.csv', row.names = T, fileEncoding = "utf8")
+
