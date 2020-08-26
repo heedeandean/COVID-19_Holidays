@@ -221,9 +221,11 @@ ic_df = ic_df_regex(ic_df)
 bs_df.to_csv('busan_df/df_data_bs_20200825.csv',encoding='UTF-8')
 ic_df.to_csv('inchon_df/df_data_ic_20200825.csv',encoding='UTF-8')
 
+frames = [bs_df,ic_df]
 
+all_df = pd.concat(frames)
 
-
+all_df.to_csv('df_data_all_20200825.csv',encoding='UTF-8')
 
 #############################    부산시 14일 동안 제공되는 이동경로 (이용X)      #############################
 
