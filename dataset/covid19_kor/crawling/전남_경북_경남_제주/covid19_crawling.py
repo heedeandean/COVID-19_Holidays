@@ -42,7 +42,6 @@ list_jn = []
 list_gb = []
 list_gn = []
 list_jj = []
-
 list_all = []
 
 
@@ -140,7 +139,6 @@ for tr in tag_jn:
         list_jn.append(data)
 
 
-
 for div in tag_ph: 
 
     area = "경북" # 포항
@@ -156,7 +154,6 @@ for div in tag_ph:
     list_gb.append(data)
 
 
-
 for li in tag_gj:
 
     area = "경북" # 경주
@@ -168,8 +165,6 @@ for li in tag_gj:
 
     data = (area, cfmDate, route, contactCnt, gender, age)
     list_gb.append(data)
-
-
 
 
 for p in tag_gs:
@@ -193,7 +188,6 @@ for p in tag_gs:
     list_gb.append(data)
 
 
-
 for td in tag_uj:
 
     area = "경북" # 울진
@@ -207,7 +201,6 @@ for td in tag_uj:
     list_gb.append(data)
 
 
-
 for td in tag_gn:
 
     area = "경남"
@@ -219,7 +212,6 @@ for td in tag_gn:
 
     data = (area, cfmDate, route, contactCnt, gender, age)
     list_gn.append(data)
-
 
 
 for line in data_jj["articles"]:
@@ -245,9 +237,9 @@ for line in data_jj["articles"]:
 # print("<<<<<<<<<<<<<<<<<<<<< 경남 >>>>>>>>>>>>>>>>>>>>\n", list_gn, "\n")
 # print("<<<<<<<<<<<<<<<<<<<<< 제주 >>>>>>>>>>>>>>>>>>>>\n", list_jj, "\n")
 
-
-
 list_all = list_jn + list_gb + list_gn + list_jj
+
+
 
 def create_csv(list_area, area):
     
