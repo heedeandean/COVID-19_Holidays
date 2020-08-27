@@ -50,10 +50,10 @@ print('부산시 데이터 down_loading.... :: ')
 for ul in ul_bs :
 
     num = ul.select('li:nth-of-type(1)')[0].text           # 확진번호
-    route = ul.select('li:nth-of-type(2)')[0].text         # 감염경로 (접촉자, 교회 등)
-    contact = ul.select('li:nth-of-type(3)')[0].text       # 접촉자 수
+    route = ul.select('li:nth-of-type(4)')[0].text         # 감염경로 (접촉자, 교회 등)
+    contact = ul.select('li:nth-of-type(6)')[0].text       # 접촉자 수
     isolation = ul.select('li:nth-of-type(4)')[0].text     # 격리장소
-    cfmDate = ul.select('li:nth-of-type(5)')[0].text       # 확진일
+    cfmDate = ul.select('li:nth-of-type(2)')[0].text       # 확진일
 
     data_bs = (num,route,contact,isolation,cfmDate)
     list_data_bs.append(data_bs)
@@ -131,14 +131,17 @@ np.savetxt('inchon_arr/arr_data_bs_20200825.csv', arr_data_ic, fmt='%s', delimit
 
 # 데이터 프레임으로 변환
 col_name = ['area','cfmDate','route','contractCnt'] # 지역 / 확진일 / 감염경로 / 접촉자 수
-
+col_name_plus = ['gender','age']
 
 ## 부산시
 bs_df = pd.DataFrame(arr_data_bs[1:,(0,4,1,2)] , columns=col_name) # 0 : 지역 - 확진번호 / 4: 확진일 / 1: 감염 경로 / 2: 접촉자 수
-
+bs_df.insert(4, col_name_plus[0], '-') # 성별 없음
+bs_df.insert(5, col_name_plus[1], '-') # 나이 없음
 ## 인천시
 ic_df = pd.DataFrame(arr_data_ic[:,(1,2,3)],columns=col_name[:-1])
 ic_df.insert(3,col_name[3],'-') # 접촉자 수 없음
+ic_df.insert(4, col_name_plus[0], '-') # 성별 없음
+ic_df.insert(5, col_name_plus[1], '-') # 나이 없음
 ic_df['area'] = '인천' # ~구 -> 인천으로 변경
 
 
@@ -168,6 +171,7 @@ def bs_df_regex(bs_df):
     for i in bs_df.index :
         bs_df.loc[i, 'area'] = p.sub('',bs_df.loc[i, 'area'])
 
+
     # 4. (xxx...) :: (강서구 등) 표현식 삭제
     p = re.compile(r'[(]\D+[)]')
     for i in bs_df.index :
@@ -187,11 +191,19 @@ def bs_df_regex(bs_df):
     # 7. 날짜 표현 변경
     p1 = re.compile(r'\d+')
     for i in bs_df.index:
-        month, day = p1.findall(bs_df.loc[i, 'cfmDate'])
-        year = str(dt.datetime.now().year)
-        hypn = '-'
-        cfmdate = year + hypn + month + hypn + day
+        try:
+            month, day = p1.findall(bs_df.loc[i, 'cfmDate'])
+            year = str(dt.datetime.now().year)
+            hypn = '-'
+            cfmdate = year + hypn + month + hypn + day
+        except ValueError:
+            cfmdate = bs_df.loc[i, 'cfmDate']
         bs_df.loc[i, 'cfmDate'] = cfmdate
+
+    # 8. 확진자 수 ',' 없애주기 -> 나중에 int 형으로 바꾸기 쉽게
+    p = re.compile(r'[,]')
+    for i in bs_df.index:
+        bs_df.loc[i, 'contractCnt'] = p.sub('', bs_df.loc[i, 'contractCnt'])
 
     return bs_df
 
@@ -218,69 +230,12 @@ ic_df = ic_df_regex(ic_df)
 
 
 
-bs_df.to_csv('busan_df/df_data_bs_20200825.csv',encoding='UTF-8')
-ic_df.to_csv('inchon_df/df_data_ic_20200825.csv',encoding='UTF-8')
+bs_df.to_csv('busan_df/df_data_bs_20200828.csv',encoding='UTF-8')
+ic_df.to_csv('inchon_df/df_data_ic_20200828.csv',encoding='UTF-8')
 
 frames = [bs_df,ic_df]
 
 all_df = pd.concat(frames)
 
-all_df.to_csv('df_data_all_20200825.csv',encoding='UTF-8')
+all_df.to_csv('df_data_all_20200828.csv',encoding='UTF-8')
 
-#############################    부산시 14일 동안 제공되는 이동경로 (이용X)      #############################
-
-
-'''
-list_move_bs = []
-
-
-# table 속성 함수화
-def arr_mapping_func(tbl):
-    if tbl != []:
-        y = []
-        for cnt in range(len(tbl)):
-
-            y.append(tbl[cnt].text)
-
-        return y
-    else:
-        return ','
-
-
-
-
-
-
-
-    tbl1 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(1)')
-    tbl2 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(2)')
-    tbl3 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(3)')
-    tbl4 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(4)')
-    tbl5 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(5)')
-    # tbl6 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(6)')
-    tbl7 = ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(7)')
-
-
-
-
-    move_city1 =    arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(1)'))              # 시도
-    move_city2 =    arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(2)'))              # 시군구
-    move_category = arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(3)'))              # 장소유형
-    move_name =     arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(4)'))              # 상호명
-    move_addr =     arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(5)'))              # 주소
-    # move_time =   arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(6)'))              # 노출일시
-    move_is_poe =   arr_mapping_func(ul.select('li:nth-of-type(6) > table > tbody > tr > td:nth-child(7)'))              # 방역 여부
-
-    move_bs = (move_city1,move_city2,move_category,move_name,move_addr,move_is_poe)
-    list_move_bs.append(move_bs)
-
-    # print(arr_mapping_func(tbl1),arr_mapping_func(tbl2),arr_mapping_func(tbl3),arr_mapping_func(tbl4),arr_mapping_func(tbl5),arr_mapping_func(tbl7))
-
-
-arr_move_bs = np.array(list_move_bs).reshape(-1,6)
-
-print(len(arr_move_bs))
-
-
-#np.savetxt('bs_20200819_move.csv', arr_move_bs, fmt='%s', delimiter=",", encoding='UTF-8')
-'''
