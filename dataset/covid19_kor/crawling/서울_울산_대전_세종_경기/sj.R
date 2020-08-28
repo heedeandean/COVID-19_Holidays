@@ -34,7 +34,6 @@ contact_num <- sapply(sj_df, '[',6)
 
 # 테이블 생성
 sj_table <- data.frame(num,no,area,route,date,contact_num)
-sj_table <- sj_table %>% arrange(num)
 #View(sj_table) # 확인
 
 # 필요한 데이터만 추출
@@ -48,5 +47,12 @@ sj$cfmDate <- paste0("2020년",sj$cfmDate)
 sj$cfmDate <- gsub("년|월|일","-",sj$cfmDate)
 sj$cfmDate <- as.Date(sj$cfmDate)
 
+
+# 성별, 나이대추가
+sj$gender <- "-"
+sj$age <- "-"
+
+sj <- sj %>% arrange(cfmDate)
+
 View(sj)
-write.csv(sj, 'C:/Users/user/Desktop/cov/sj_200824.csv', row.names = F)
+write.csv(sj, 'C:/Users/user/Desktop/cov/sj_200828.csv', row.names = F)

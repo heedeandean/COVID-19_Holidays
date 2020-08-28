@@ -8,14 +8,13 @@ df <- html %>%
   html_text() %>% 
   matrix()
 
-df # 확인
+#df # 확인
 
 # 데이터 전처리
 dj_df <- str_trim(df, side="both")
 dj_df <- matrix(dj_df, ncol=7, byrow = T)
 dj_df <- data.frame(dj_df)
 dj_df$X1 <- as.numeric(dj_df$X1)
-dj_df <- dj_df %>% arrange(X1)
 #View(dj_df) # 확인
 
 
@@ -30,8 +29,6 @@ names(dj) <- c("area","cfmDate","route")
 dj$contactCnt <- "-"
 dj$area <- "대전"
 dj$route[dj$route==""] <- "-" 
-View(dj)
-
 
 # 날짜
 dj$cfmDate <- gsub("[[:punct:]]","",dj$cfmDate)
@@ -45,5 +42,16 @@ for (i in 1:length(dj$cfmDate)){
 dj$cfmDate <- paste0("20200",dj$cfmDate)
 dj$cfmDate <- as.Date(dj$cfmDate, "%Y%m%d")
 
+# 성별, 나이대 추가
+dj$gender <- "-"
+dj$age <- dj_table[,4]
+dj$age <- gsub("취학아동|미취학 아동",0,dj$age)
+dj$age <- gsub("[^[:digit:]]","",dj$age)
+dj$age <- as.numeric(dj$age)
+dj$age <- ifelse(dj$age<10 ,0 ,dj$age)
+dj$age <- paste0(dj$age,"s")
+
+dj <- dj %>% arrange(cfmDate)
+
 View(dj)
-write.csv(dj, 'C:/Users/user/Desktop/cov/dj200825.csv',row.names = F)
+write.csv(dj, 'C:/Users/user/Desktop/cov/dj_200828.csv',row.names = F)
