@@ -23,7 +23,6 @@ date <-  sapply(us_df, "[",4)
 
 # 테이블 생성
 us_table <- data.frame(num,no,area,route,date)
-us_table <- us_table %>% arrange(num)
 #View(us_table) # 확인
 
 # 필요한 데이터만 추출
@@ -36,5 +35,10 @@ us$contactCnt <- "-"
 us$cfmDate <- paste0("2020/",us$cfmDate)
 us$cfmDate <- as.Date(us$cfmDate)
 
+# 성별, 나이대 추가
+us$gender <- "-"
+us$age <- "-"
+
+us <- us %>% arrange(cfmDate)
 View(us)
-write.csv(us, 'C:/Users/user/Desktop/cov/us200825.csv',row.names = F)
+write.csv(us, 'C:/Users/user/Desktop/cov/us_200828.csv',row.names = F)
