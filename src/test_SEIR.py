@@ -4,11 +4,17 @@ import matplotlib.pyplot as pl
 
 # Initial conditions
 # 인구수 51780579
+# 8월 30일 기준
+# 확진 누적 : 19699 격리해제 : 14903 격리중 : 4473 사망 : 323
 S0 = 9772  # :양성판정+검사중+음성판정
 E0 = 818  # :검사중
 I0 = 31  # :확진자
 R0 = 2  # :완치자 + 사망자(0)
 
+S0 = 1846450+58021  # :검사중+음성판정
+E0 = 58021  # :검사중
+I0 = 19699  # :확진자
+R0 = 14903+323  # :완치자 + 사망자(0)
 
 
 # Time vector
@@ -37,6 +43,10 @@ ramda = 1 / 14
 sigma = 0.25
 nu = mu = 1/(70*365) # 자연사망율 반영
 gamma= 1/14 # I ->R 회복율 = 회복기간의 역수
+
+R0 = 0.5
+T0 = 1/ ramda * 24
+beta = (R0/T0) + (R0/(T0*S0))
 
 Input = (S0_, E0, I0)
 
@@ -80,3 +90,13 @@ pl.xlabel('Time(days)')
 pl.legend(loc=0)
 pl.ylabel('Recovereds')
 pl.show()
+
+print('r: 0.5 / max :: ',(max(SEIR[:, 2])-I0)*N)
+
+for i in range(len(SEIR[:,2])):
+    if SEIR[i,2] == max(SEIR[:,2]):
+        print(i,'일 째 되는날 최대값치')
+
+
+# r: 2.0 / max :;  48157.04950621829
+# r: 0.5 / max :;  47748.531226044855

@@ -1,3 +1,7 @@
+library('dplyr')
+library('XML')
+library('ggplot2')
+
 # 제공 url
 base_url <- "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson"
 
@@ -43,7 +47,32 @@ totalData <- rbind(totalData,xmlData)
 # 데이터 확인
 View(totalData)
 
-# csv파일로 저장
-write.csv(totalData, "c:/workspaces/R/COVID_19/covid19_0821.csv", row.names=FALSE)
+# csv파일로 저장 - 우현 > 상대경로로 바꿨습니다 .. !
+write.csv(totalData, "dataset/covid19_kor/cnt/covid19_0821.csv", row.names=FALSE, fileEncoding = 'UTF-8')
 
 
+
+########################### 우현 > 시각화 관련 해서 수정했습니다. ###########################
+
+colnames(totalData)
+subData <-totalData[,c(6,1,2,3,7,8,9,10,11,12)]
+subData <- subData[subData$gubunEn=='Total',]
+
+subData[,'createDt']<- as.POSIXct.Date(subData$createDt)
+subData <- subData[subData$createDt>'2020-04-13',] # 이전 데이터는 NA 수치가 너무 많음
+subData[subData$qurRate=='','qurRate'] <- NA
+subData <- subData[-c(130),] # 4/16일 겹침
+View(subData)
+
+
+def_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(defCnt)/10000)) +
+  geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
+  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b %d"))
+
+inc_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(incDec)))+
+  geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
+  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b %d"))
+
+def_date
+
+inc_date
