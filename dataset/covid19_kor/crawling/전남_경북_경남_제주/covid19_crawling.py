@@ -5,7 +5,8 @@ import re
 import requests
 import json
 from datetime import datetime
-import csv   
+import csv 
+import pymysql  
 
 context = ssl._create_unverified_context()
 
@@ -256,6 +257,25 @@ def create_csv(list_area, area):
 # create_csv(list_gb, "gb")
 # create_csv(list_gn, "gn")
 # create_csv(list_jj, "jj")
-create_csv(list_all, "all")
+# create_csv(list_all, "all")
 
 
+
+sql_coronic = "insert into Coronic(area, cfm_date, route, contact_cnt, gender, age) values(%s,%s,%s,%s,%s,%s)"
+
+conn = pymysql.connect(
+    user='root', 
+    passwd='1234', 
+    host='127.0.0.1', 
+    db='covid19', 
+    charset='utf8'
+)
+
+with conn:
+    cur = conn.cursor()
+
+    cur.executemany(sql_coronic, list_all)
+    print("반영된 수", cur.rowcount)
+
+
+print(len(list_all))
