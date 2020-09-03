@@ -3,23 +3,43 @@
 import scipy.integrate as spi
 import numpy as np
 import pylab as pl
+import datetime as dt
 
-beta =  0.1934 # S ->I 감염율 = beta 를 구하지 못해서 논문에 나온 beta 값 참조 ( 2020.02.10 중국논문발표)
-#우리나라도 중국과 마찬가지로 2차 지역감염이 시작되고 전염력이 2/18 당시 매우 높았던것으로 보여 논문의 beta 도입.
-
-gamma =  1/14 # I ->R 회복율 = 평균 회복기간의 역수
+t_start = 0.0
 t_inc = 1.0
 t_end = 150.0
 
+Rn = 2.3
+gamma =  1/14 # I ->R 회복율 = 평균 회복기간의 역수
+beta = Rn * gamma
+
+
 # 2/18 31번확진자 나온날 기준으로 초기 SIR 모델 만듦.
-S0  = 9772 ; I0  = 31;R0 = 2
+# S0  = 9772 ; I0  = 31;R0 = 2
+
+# tested  4/13
+t_date = dt.date(2020, 4, 13)
+
+
+test = 518743
+negative = 494815
+confirmed = 10537
+released = 7447
+death = 217
+test_ing = test - (negative + confirmed + released + death)
+
+S0 = negative
+# E0 = test_ing
+I0 = confirmed
+R0 = released + death
+
 
 N = S0 + I0 + R0
-S0  = 9772 /N  # susceptible hosts
-I0  = 31 /N    # infectious hosts
-R0 = 2 /N      # recovered hosts
+S0 = S0 / N  # susceptible hosts
+I0 = I0 / N    # infectious hosts
+R0 = R0 / N      # recovered hosts
 
-Input = (S0, I0, 0.0)
+Input = (S0, I0, R0)
 
 def simple_SIR(INT, t):
   '''The main set of equation'''
@@ -30,7 +50,7 @@ def simple_SIR(INT, t):
   Y[2] = gamma * X[1]
   return Y # for spicy.odeint
 
-t_start =0.0 ;
+
 t_range = np.arange(t_start, t_end + t_inc, t_inc)
 SIR= spi.odeint(simple_SIR, Input, t_range)
 
@@ -43,3 +63,17 @@ pl.title('Prediction of Simple nCOV-19 SIR model')
 pl.xlabel('Time(day)')
 pl.ylabel('individuals')
 pl.show()
+
+max_inf_rate = max(SIR[:,1])
+max_inf_date = None
+
+for t in range(int(t_end)):
+  if SIR[t,1] == max_inf_rate:
+    print('최대 증가율 {} , 최대 일 : {}'.format(SIR[t,1],t))
+    max_inf_date = t
+
+
+inc_inf_cnt = int(I0 * (max_inf_rate + 1) * N)
+fo_date = t_date + dt.timedelta(days=max_inf_date)
+
+print('{} 예측 결과 :: {}'.format(fo_date,inc_inf_cnt))

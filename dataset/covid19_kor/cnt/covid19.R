@@ -1,6 +1,8 @@
 library('dplyr')
 library('XML')
 library('ggplot2')
+library('scales')
+library('lubridate')
 
 # 제공 url
 base_url <- "http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson"
@@ -10,7 +12,7 @@ key <- "sA78yY%2FijK3uskzaHrmoktsxRUj05qXiFwAnVayPUdTBcDb2CoejuL1GSJp0pp%2FwItgI
 rows <-  10
 pg <- 1
 startdate <- 20200101
-enddate <- 20200821
+enddate <- 20200901
 
 # 오픈 API호출 url생성
 url <- paste0(base_url,paste0("?serviceKey=",key),paste0('&numOfRows=',rows),paste0('&startCreateDt=',startdate),
@@ -56,8 +58,10 @@ write.csv(totalData, "dataset/covid19_kor/cnt/covid19_0821.csv", row.names=FALSE
 
 colnames(totalData)
 subData <-totalData[,c(6,1,2,3,7,8,9,10,11,12)]
-subData <- subData[subData$gubunEn=='Total',]
+subData <- subData[totalData$gubunEn=='Total',]
 
+subData[,'createDt'] <- ymd_hms(subData$createDt)
+subData[,'createDt'] <- as.Date(subData$createDt)
 subData[,'createDt']<- as.POSIXct.Date(subData$createDt)
 subData <- subData[subData$createDt>'2020-04-13',] # 이전 데이터는 NA 수치가 너무 많음
 subData[subData$qurRate=='','qurRate'] <- NA
@@ -67,11 +71,11 @@ View(subData)
 
 def_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(defCnt)/10000)) +
   geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
-  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b %d"))
+  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b/%d"))
 
 inc_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(incDec)))+
   geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
-  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b %d"))
+  scale_x_datetime(date_breaks = "2 day", labels = date_format("%b/%d"))
 
 def_date
 
