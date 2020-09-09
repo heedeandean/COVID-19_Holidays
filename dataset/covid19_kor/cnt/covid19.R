@@ -68,7 +68,7 @@ subData[subData$qurRate=='','qurRate'] <- NA
 subData <- subData[-c(130),] # 4/16일 겹침
 View(subData)
 
-
+write.csv(subData, "dataset/covid19_kor/cnt/covid19_0821_clean.csv", row.names=FALSE, fileEncoding = 'UTF-8')
 def_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(defCnt)/10000)) +
   geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
   scale_x_datetime(date_breaks = "2 day", labels = date_format("%b/%d"))
