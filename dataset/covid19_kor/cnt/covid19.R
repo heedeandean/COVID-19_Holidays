@@ -12,7 +12,7 @@ key <- "sA78yY%2FijK3uskzaHrmoktsxRUj05qXiFwAnVayPUdTBcDb2CoejuL1GSJp0pp%2FwItgI
 rows <-  10
 pg <- 1
 startdate <- 20200101
-enddate <- 20200901
+enddate <- 20200910
 
 # 오픈 API호출 url생성
 url <- paste0(base_url,paste0("?serviceKey=",key),paste0('&numOfRows=',rows),paste0('&startCreateDt=',startdate),
@@ -50,7 +50,7 @@ totalData <- rbind(totalData,xmlData)
 View(totalData)
 
 # csv파일로 저장 - 우현 > 상대경로로 바꿨습니다 .. !
-write.csv(totalData, "dataset/covid19_kor/cnt/covid19_0821.csv", row.names=FALSE, fileEncoding = 'UTF-8')
+write.csv(totalData, "dataset/covid19_kor/cnt/covid19_0910.csv", row.names=FALSE, fileEncoding = 'UTF-8')
 
 
 
@@ -68,7 +68,7 @@ subData[subData$qurRate=='','qurRate'] <- NA
 subData <- subData[-c(130),] # 4/16일 겹침
 View(subData)
 
-write.csv(subData, "dataset/covid19_kor/cnt/covid19_0821_clean.csv", row.names=FALSE, fileEncoding = 'UTF-8')
+write.csv(subData, "covid19_0910_clean.csv", row.names=FALSE, fileEncoding = 'UTF-8')
 def_date <- ggplot(data = subData , aes(x = createDt , y = as.integer(defCnt)/10000)) +
   geom_line(size = 0.5) + geom_point(size = 2,colour = 'blue') +
   scale_x_datetime(date_breaks = "2 day", labels = date_format("%b/%d"))
