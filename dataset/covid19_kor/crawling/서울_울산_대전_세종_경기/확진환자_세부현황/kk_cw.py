@@ -8,8 +8,14 @@ import numpy as np
 #### 적용 함수
 def page_count(num):
     # 드라이버 설정
-    path = './chromedriver'
+    # Mac_pc
+    # path = './chromedriver'
+
+    #Win_pc
+    path = './chromedriver.exe'
+
     driver = webdriver.Chrome(path)
+
     driver.get('https://www.gg.go.kr/bbs/board.do?bsIdx=722&menuId=2903#page={}'.format(num))
 
     # 홀딩
@@ -29,7 +35,12 @@ def page_count(num):
 def driver_chrom(i):
 
     # 맥 드라이버 전용 + 자신과 맞는 크롬을 이용해서 드라이버 다운로드 하면 사용 가능
-    path = './chromedriver'
+    # 드라이버 설정
+    # Mac_pc
+    # path = './chromedriver'
+
+    # Win_pc
+    path = './chromedriver.exe'
     driver = webdriver.Chrome(path)
 
     # 드라이버로 페이지 정보 가져오기
@@ -103,7 +114,7 @@ for i in range(1,pageNum+1):
 arr_data_kk = np.array(kk_list).reshape(-1,7)
 
 # 세이브 포인트
-np.savetxt('arr_data_kk_20200826.csv',arr_data_kk, fmt='%s', delimiter=",", encoding='UTF-8')
+np.savetxt('arr_data_kk_20200916.csv',arr_data_kk, fmt='%s', delimiter=",", encoding='UTF-8')
 
 # 드라이브 종료
 driver.quit()
