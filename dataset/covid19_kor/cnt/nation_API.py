@@ -139,5 +139,3 @@ plt.xlabel('Date')
 
 plt.show()
 
-for index in see_df:
-    pass
