@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as pl
 import datetime as dt
 
+np.set_printoptions(precision=3)
+
 
 # Initial conditions
 # 인구수 51780579
@@ -66,7 +68,7 @@ print('\n논문 수식으로 구한 감염율 beta =',beta)
 1월 초기에 전염병예측모델과 현재 현황이 많이 달라져서 사용할수 없음. 그당시 Ro, beta  모두 작은값.
 '''
 
-Rn = 3.435
+Rn = 1.0
 gamma =  1/14 # I ->R 회복율 = 평균 회복기간의 역수
 beta = Rn * gamma
 ramda = 1 / 14
@@ -88,8 +90,8 @@ def SEIR(INT, t):
     return Y  # for spicy.odeint
 
 
-t_start = 0.0;
-t_end = 180;
+t_start = 0.0
+t_end = 180
 t_inc = 1.0
 t_range = np.arange(t_start, t_end + t_inc, t_inc)
 SEIR = spi.odeint(SEIR, Input, t_range)
@@ -112,9 +114,10 @@ max_inf_rate = max(SEIR[:,2])
 max_inf_date = None
 
 for t in range(int(t_end)):
-  if SEIR[t,2] == max_inf_rate:
-    print('최대 증가율 {} , 최대 일 : {}'.format(SEIR[t,2],t))
-    max_inf_date = t
+    
+    if SEIR[t,2] == max_inf_rate:
+        print('최대 증가율 {} , 최대 일 : {}'.format(SEIR[t,2],t))
+        max_inf_date = t
 
 
 inc_inf_cnt = int(I0 * (max_inf_rate + 1) * N)
