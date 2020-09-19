@@ -5,6 +5,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler as scaler
 
 
 def MinMaxScaler(data):
@@ -49,10 +50,6 @@ train_size = int(len(xy) * 0.7)
 train_set = xy[0:train_size]
 test_set = xy[train_size - seq_length:]  # Index from [train_size - seq_length] to utilize past sequence
 
-# Scale each
-train_set = MinMaxScaler(train_set)
-test_set = MinMaxScaler(test_set)
-
 
 # build datasets
 def build_dataset(time_series, seq_length):
@@ -66,29 +63,35 @@ def build_dataset(time_series, seq_length):
         dataY.append(y)
     return np.array(dataX), np.array(dataY)
 
+
 trainX, trainY = build_dataset(train_set, seq_length)
 testX, testY = build_dataset(test_set, seq_length)
 
-print(trainX.shape)  # (505, 7, 5)
+print(trainX)
 print(trainY.shape)
+
+min_max = scaler()
+trainX = min_max.fit_transform(trainX)
+trainY = min_max.fit_transform(trainY)
+
+testX = min_max.fit_transform(testX)
+testY = min_max.fit_transform(testY)
+
+
 
 tf.model = tf.keras.Sequential()
 tf.model.add(tf.keras.layers.LSTM(units=1, input_shape=(seq_length, data_dim)))
-# tf.model.add(tf.keras.layers.Dense(30, activation='softsign'))
-tf.model.add(tf.keras.layers.Dense(units=output_dim, activation= 'tanh'))
+tf.model.add(tf.keras.layers.Dense(units=output_dim, activation='tanh'))
 tf.model.summary()
 
-tf.model.compile(loss='mean_absolute_error',
-                 # optimizer=tf.keras.optimizers.Adam(lr=learning_rate),
-                 optimizer='adam',
+tf.model.compile(loss='mse',
+                 optimizer=tf.keras.optimizers.Adam(lr=learning_rate),
+                 # optimizer='adam',
                  metrics=['accuracy'])
 tf.model.fit(trainX, trainY, epochs=iterations)
 
-
 # Test step
 test_predict = tf.model.predict(testX)
-
-
 
 # Plot predictions
 plt.plot(testY)
