@@ -40,10 +40,10 @@ create table GGExternal (
     create_date  timestamp not null DEFAULT CURRENT_TIMESTAMP  
 );
 
-describe Exam;
-select * from GGInternal;
--- drop table GGInternal;
-delete from Exam;
+
+
+
+
 
 
 
