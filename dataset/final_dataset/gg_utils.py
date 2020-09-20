@@ -12,7 +12,7 @@ import csv
 path = './chromedriver.exe' # Win_pc
 
 # 크롬 로컬 다운로드 경로(각 로컬 pc마다 상이함)
-downPath = 'C:/Users/user/Downloads/'
+downPath = 'C:/../Downloads/'
 
 
 ########### 경기도 확진자 정보1 #####################

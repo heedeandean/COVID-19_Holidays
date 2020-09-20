@@ -19,8 +19,8 @@ conn = pymysql.connect(
     charset='utf8'
 )
 
-with conn:
-    cur = conn.cursor()
+with conn.cursor() as cur:
+
 
     # exam_list = gu.get_exam()    
     # cur.executemany(sql_exam, exam_list)
