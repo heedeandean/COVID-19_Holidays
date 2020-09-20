@@ -22,23 +22,23 @@ conn = pymysql.connect(
 with conn:
     cur = conn.cursor()
 
-    exam_list = gu.get_exam()    
-    cur.executemany(sql_exam, exam_list)
-    print("[Exam] 반영된 수 ", cur.rowcount)
-    print(len(exam_list))
+    # exam_list = gu.get_exam()    
+    # cur.executemany(sql_exam, exam_list)
+    # print("[Exam] 반영된 수 ", cur.rowcount)
+    # print(len(exam_list))
 
 
-    cur.execute(sql_gginfo_select)
-    pastCnt = cur.fetchall()[0][0]
+    # cur.execute(sql_gginfo_select)
+    # pastCnt = cur.fetchall()[0][0]
 
-    gg_list = gu.get_ggInfo(pastCnt)
+    # gg_list = gu.get_ggInfo(pastCnt)
 
-    if not gg_list:
-        print("GGInfo테이블에 INSERT 할 것이 없습니다.")
-    else:
-        cur.executemany(sql_gginfo, gg_list)
-        print("[GGInfo] 반영된 수 ", cur.rowcount)
-        print(len(gg_list))    
+    # if not gg_list:
+    #     print("GGInfo테이블에 INSERT 할 것이 없습니다.")
+    # else:
+    #     cur.executemany(sql_gginfo, gg_list)
+    #     print("[GGInfo] 반영된 수 ", cur.rowcount)
+    #     print(len(gg_list))    
 
 
     gg_list_csv = gu.get_csvDown()    

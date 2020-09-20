@@ -13,9 +13,9 @@ create table GGInternal (
     create_date  timestamp not null DEFAULT CURRENT_TIMESTAMP  
 );
 
--- 564 /3566 4130
+
  insert into GGInternal(cfm_date, symptom, asymptom, research, cfm_cnt, cum_cfm_cnt, exam_cnt)
-(select AA.cfm_date, BB.symptom, CC.asymptom, DD.research, AA.cfm_cnt, AA.cum_cfm_cnt, EE.exam_cnt
+(select AA.cfm_date, ifnull(BB.symptom, 0), ifnull(CC.asymptom, 0), ifnull(DD.research, 0), AA.cfm_cnt, AA.cum_cfm_cnt, EE.exam_cnt
    from (select cfm_date, cfm_cnt, @total := @total + cfm_cnt as cum_cfm_cnt
 			 from (select cfm_date, count(*) as cfm_cnt
 					   from gginfo 
@@ -72,7 +72,7 @@ insert into GGExternal(cfm_date, cfm_cnt, cum_cfm_cnt)
 -- 2020-09-14 ~ 현재 => 2
 
 update GGInternal
-	set policy = 1
+	set policy = 0
     where cfm_date between '2020-01-26' and '2020-03-21';
 
 update GGInternal
@@ -97,5 +97,7 @@ update GGInternal
     
 -- 데이터 확인    
 select * from gginternal where policy is null;
-select * from GGInternal order by 1 desc;
+select * from GGInternal;
 select * from GGExternal;
+
+-- 566 /3590 4156
