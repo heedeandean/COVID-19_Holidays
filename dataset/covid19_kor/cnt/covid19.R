@@ -12,7 +12,7 @@ key <- "sA78yY%2FijK3uskzaHrmoktsxRUj05qXiFwAnVayPUdTBcDb2CoejuL1GSJp0pp%2FwItgI
 rows <-  10
 pg <- 1
 startdate <- 20200101
-enddate <- 20200910
+enddate <- 20200917
 
 # 오픈 API호출 url생성
 url <- paste0(base_url,paste0("?serviceKey=",key),paste0('&numOfRows=',rows),paste0('&startCreateDt=',startdate),
@@ -50,7 +50,7 @@ totalData <- rbind(totalData,xmlData)
 View(totalData)
 
 # csv파일로 저장 - 우현 > 상대경로로 바꿨습니다 .. !
-write.csv(totalData, "dataset/covid19_kor/cnt/covid19_0910.csv", row.names=FALSE, fileEncoding = 'UTF-8')
+write.csv(totalData, "covid19_0917.csv", row.names=FALSE, fileEncoding = 'UTF-8')
 
 
 
