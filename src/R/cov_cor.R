@@ -15,8 +15,7 @@ cov_g <- dbGetQuery(conn_covid, query_g)
 
 # 일일 예상 감염률 :  무증상 * 0.8%(0.008) + 유증상 * 3.5%(0.035)
 gg <- cov_g
-gg[is.na(gg)] <- 0
-gg$risk <- (gg$symptom * 0.008)+(gg$asymptom * 0.035)
+gg$spread <- (gg$symptom * 0.008)+(gg$asymptom * 0.035)
 View(gg)
 
 # 선정한 변수3개와 확진자수의 상관관계 확인
