@@ -45,7 +45,7 @@ data_dim = 4
 hidden_dim = 1 # 각 셀의 출력 크기
 output_dim = 1
 learning_rate = 0.005
-iterations = 10000
+iterations = 5000
 
 # Open, High, Low, Volume, Close
 xy = np.loadtxt('/Users/jungunbae/Desktop/test_0918.csv', delimiter=',')
