@@ -41,9 +41,8 @@ create table GGExternal (
 );
 
 
-
-
-
-
+create table FillDates (
+    cfm_date varchar(13) primary key
+);
 
 
