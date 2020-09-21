@@ -48,8 +48,8 @@ learning_rate = 0.005
 iterations = 5000
 
 # Open, High, Low, Volume, Close
-xy = np.loadtxt('/Users/jungunbae/Desktop/test_0918.csv', delimiter=',')
-xy = xy[::-1]  # reverse order (chronically ordered)
+xy = np.loadtxt('test_0918.csv', delimiter=',')
+# xy = xy[::-1]  # reverse order (chronically ordered)
 xy = MinMaxScaler(xy)
 x = xy
 y = xy[:, [-1]]  # Close as label
@@ -68,7 +68,7 @@ for i in range(0, len(y) - seq_length):
     dataY.append(_y)
 
 # train/test split
-train_size = int(len(dataY) * 0.75)
+train_size = int(len(dataY) * 0.8)
 test_size = len(dataY) - train_size
 
 trainX, testX = np.array(dataX[0:train_size]), np.array(
