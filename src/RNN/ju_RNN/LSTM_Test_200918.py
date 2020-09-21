@@ -45,16 +45,14 @@ data_dim = 4
 hidden_dim = 1 # 각 셀의 출력 크기
 output_dim = 1
 learning_rate = 0.005
-iterations = 5000
+iterations = 10000
 
 # Open, High, Low, Volume, Close
 xy = np.loadtxt('/Users/jungunbae/Desktop/test_0918.csv', delimiter=',')
-xy = xy[::-1]  # reverse order (chronically ordered)
 xy = MinMaxScaler(xy)
 x = xy
 y = xy[:, [-1]]  # Close as label
-print("x[0]: ", x[0])
-print("y[0]: ",y[0])
+
 
 # build a dataset
 dataX = []
@@ -68,7 +66,7 @@ for i in range(0, len(y) - seq_length):
     dataY.append(_y)
 
 # train/test split
-train_size = int(len(dataY) * 0.75)
+train_size = int(len(dataY) * 0.80)
 test_size = len(dataY) - train_size
 
 trainX, testX = np.array(dataX[0:train_size]), np.array(
@@ -82,7 +80,7 @@ Y = tf.placeholder(tf.float32, [None, output_dim])
 
 # build a LSTM network
 cell = tf.contrib.rnn.BasicLSTMCell(
-    num_units=hidden_dim,forget_bias=1.0,state_is_tuple=True, activation=tf.sigmoid)
+    num_units=hidden_dim,forget_bias=0.5, state_is_tuple=True, activation=tf.sigmoid)
 outputs, _states = tf.nn.dynamic_rnn(cell, X, dtype=tf.float32)
 
 
