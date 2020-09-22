@@ -12,7 +12,7 @@ import csv
 path = './chromedriver.exe' # Win_pc
 
 # 크롬 로컬 다운로드 경로(각 로컬 pc마다 상이함)
-downPath = 'C:/../Downloads/'
+downPath = 'C:/Users/user/Downloads/'
 
 
 ########### 경기도 확진자 정보1 #####################
@@ -159,18 +159,15 @@ def get_csvDown():
         reader = csv.reader(f, delimiter = '\t') 
         next(reader)
         
-        num = 0
         for row in reader:
 
-            num += 1 # csv 연번이 일정하지 않았음
             cfmDate = dt.strptime(row[5], '%Y. %m. %d.').strftime('%Y-%m-%d')
 
             symptomDate = row[6]
             if (symptomDate != ''):
                 symptomDate = dt.strptime(symptomDate, '%Y. %m. %d.').strftime('%Y-%m-%d')
-        
 
-            data = (num, row[2], row[3], row[4], cfmDate, symptomDate, row[7], row[11])
+            data = (row[0], row[2], row[3], row[4], cfmDate, symptomDate, row[7], row[11])
             list_gg.append(data)
             
     return list_gg

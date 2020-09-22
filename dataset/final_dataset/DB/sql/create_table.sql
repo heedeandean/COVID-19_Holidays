@@ -33,6 +33,8 @@ create table GGInternal (
 );
 
 -- 해외
+drop table if exists GGExternal;
+
 create table GGExternal (
     cfm_date varchar(13) primary key,	 -- 확진일
     cfm_cnt int(13),			 -- 당일 확진자 수

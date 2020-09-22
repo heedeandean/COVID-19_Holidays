@@ -1,19 +1,5 @@
 -- 국내
-drop table if exists GGInternal;
-
-create table GGInternal (
-    cfm_date varchar(13) primary key,	 -- 확진일
-    symptom int(13),							 -- 유증상
-    asymptom int(13),					     -- 무증상
-    research int(13),							 -- 조사중
-    cfm_cnt int(13),							 -- 당일 확진자 수
-    cum_cfm_cnt  int(20),					 -- 누적 확진자 수
-    exam_cnt int(13),							 -- 검사 수
-    policy float(20),							 -- 정책
-    create_date  timestamp not null DEFAULT CURRENT_TIMESTAMP  
-);
-
-
+delete from GGInternal;
  insert into GGInternal(cfm_date, symptom, asymptom, research, cfm_cnt, cum_cfm_cnt, exam_cnt)
 (select AA.cfm_date, ifnull(BB.symptom, 0), ifnull(CC.asymptom, 0), ifnull(DD.research, 0), AA.cfm_cnt, AA.cum_cfm_cnt, EE.exam_cnt
    from (select cfm_date, cfm_cnt, @total := @total + cfm_cnt as cum_cfm_cnt
@@ -41,27 +27,7 @@ create table GGInternal (
 															  from gginfo 
 															  where how_inf REGEXP '유럽|해외|입국|비행기|태국|이란' or relation REGEXP '유럽|해외|입국|비행기|태국') and issymtom = '조사중'
 															  group by cfm_date) as DD ON (AA.cfm_date = DD.cfm_date) 
-			LEFT JOIN (select * from exam) as EE ON (AA.cfm_date = EE.exam_date)); 
-
-
--- 해외
-drop table if exists GGExternal;
-
-create table GGExternal (
-    cfm_date varchar(13) primary key,	 -- 확진일
-    cfm_cnt int(13),							 -- 당일 확진자 수
-    cum_cfm_cnt  int(20),					 -- 누적 확진자 수
-    create_date  timestamp not null DEFAULT CURRENT_TIMESTAMP  
-);
-
-insert into GGExternal(cfm_date, cfm_cnt, cum_cfm_cnt)
-(select cfm_date, cfm_cnt, @total := @total + cfm_cnt as cum_cfm_cnt
-  from ( select cfm_date, count(*) as cfm_cnt
-			 from gginfo
-			 where how_inf REGEXP '유럽|해외|입국|비행기|태국|이란' or relation REGEXP '유럽|해외|입국|비행기|태국'
-			 group by cfm_date) as a,  (Select @total := 0) as total);
-
-
+			LEFT JOIN exam as EE ON (AA.cfm_date = EE.exam_date)); 
 
 -- 정책
 -- 2020-01-26 ~ 2020-03-21 => 0
@@ -95,9 +61,36 @@ update GGInternal
 	set policy = 2
     where cfm_date between '2020-09-14' and (select * from (select max(cfm_date) from gginternal) as aa);      
     
+    
+
+-- 해외
+
+-- insert into GGExternal(cfm_date, cfm_cnt, cum_cfm_cnt)
+-- (select cfm_date, cfm_cnt, @total := @total + cfm_cnt as cum_cfm_cnt
+--   from ( select cfm_date, count(*) as cfm_cnt
+-- 			 from gginfo
+-- 			 where how_inf REGEXP '유럽|해외|입국|비행기|태국|이란' or relation REGEXP '유럽|해외|입국|비행기|태국'
+-- 			 group by cfm_date) as a,  (Select @total := 0) as total);
+-- 
+
+delete from filldates;
+CALL filldates((select min(cfm_date) from gginfo), (select max(cfm_date) from gginfo));
+
+delete from GGExternal;
+insert into GGExternal(cfm_date, cfm_cnt, cum_cfm_cnt)
+(select cfm_date, cfm_cnt, @total := @total + cfm_cnt as cum_cfm_cnt
+   from (select f.cfm_date, ifnull(cfm_cnt, 0) as cfm_cnt 
+		  from filldates as f 
+	 LEFT JOIN (select cfm_date, count(*) as cfm_cnt
+				 from gginfo
+				 where how_inf REGEXP '유럽|해외|입국|비행기|태국|이란' or relation REGEXP '유럽|해외|입국|비행기|태국'
+				 group by cfm_date) as g ON (f.cfm_date = g.cfm_date)) as t
+	    , (Select @total := 0) as total);
+
+    
 -- 데이터 확인    
 select * from gginternal where policy is null;
-select * from GGInternal;
-select * from GGExternal;
+select * from GGInternal order by 1 desc;
+select * from GGExternal order by 1 desc;
 
--- 566 /3590 4156
+-- 566 /3608 4174
