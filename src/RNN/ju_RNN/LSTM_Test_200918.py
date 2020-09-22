@@ -70,6 +70,7 @@ for i in range(0, len(y) - seq_length):
     dataX.append(_x)
     dataY.append(_y)
 
+
 # train/test split
 <<<<<<< HEAD
 train_size = int(len(dataY) * 0.80)
