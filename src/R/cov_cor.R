@@ -54,7 +54,7 @@ corrplot(exam_cor,               # 상관행렬
          diag = FALSE)           # 대각 행렬 제외
 
 
-# 확진자와 감염률
+# 확진자와 2차 공격률
 spread_cor <-  gg[,c(5,10)]
 spread_cor <- cor(spread_cor)
 corrplot(spread_cor,             # 상관행렬
