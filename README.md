@@ -29,7 +29,7 @@
 - [안은지](https://github.com/eunji32)
   - 데이터 분석, 정책 제언
 - [엄희진](https://github.com/heedeandean)
-  - 데이터 수집, 해외 시계열 모델링 구축
+  - 데이터 수집, 해외 시계열 모델링 구축, DB 구축
 
 
 
