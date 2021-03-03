@@ -22,13 +22,13 @@
     - MySQL ver 5.7
 ## 프로젝트 참여자
 
-- [김우현](https://github.com/alpha-94)
+- [alpha-94](https://github.com/alpha-94)
   - 데이터 수집, 국내 시계열 예측 모델링 구축
-- [배정언](https://github.com/jung-un)
+- [jung-un](https://github.com/jung-un)
   - 데이터 분석, 정책 제언
-- [안은지](https://github.com/eunji32)
+- [eunji32](https://github.com/eunji32)
   - 데이터 분석, 정책 제언
-- [엄희진](https://github.com/heedeandean)
+- [heedeandean](https://github.com/heedeandean)
   - 데이터 수집, 해외 시계열 모델링 구축, DB 구축
 
 
